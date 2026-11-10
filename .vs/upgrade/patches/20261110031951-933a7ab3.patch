@@ -1,0 +1,5 @@
+﻿diff --git a/tests\PersonalTaskPlanner.Tests\PersonalTaskPlanner.Tests.csproj b/tests\PersonalTaskPlanner.Tests\PersonalTaskPlanner.Tests.csproj
+--- a/tests\PersonalTaskPlanner.Tests\PersonalTaskPlanner.Tests.csproj
++++ /dev/null
+@@ -1,1 +0,0 @@
+-

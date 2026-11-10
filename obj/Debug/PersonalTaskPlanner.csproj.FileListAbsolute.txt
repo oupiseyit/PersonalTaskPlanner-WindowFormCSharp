@@ -1,0 +1,9 @@
+\\Mac\Home\Documents\PersonalTaskPlanner\bin\Debug\PersonalTaskPlanner.exe.config
+\\Mac\Home\Documents\PersonalTaskPlanner\bin\Debug\PersonalTaskPlanner.exe
+\\Mac\Home\Documents\PersonalTaskPlanner\bin\Debug\PersonalTaskPlanner.pdb
+\\Mac\Home\Documents\PersonalTaskPlanner\obj\Debug\PersonalTaskPlanner.csproj.AssemblyReference.cache
+\\Mac\Home\Documents\PersonalTaskPlanner\obj\Debug\PersonalTaskPlanner.Properties.Resources.resources
+\\Mac\Home\Documents\PersonalTaskPlanner\obj\Debug\PersonalTaskPlanner.csproj.GenerateResource.cache
+\\Mac\Home\Documents\PersonalTaskPlanner\obj\Debug\PersonalTaskPlanner.csproj.CoreCompileInputs.cache
+\\Mac\Home\Documents\PersonalTaskPlanner\obj\Debug\PersonalTaskPlanner.exe
+\\Mac\Home\Documents\PersonalTaskPlanner\obj\Debug\PersonalTaskPlanner.pdb

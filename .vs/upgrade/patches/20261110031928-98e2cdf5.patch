@@ -1,0 +1,57 @@
+﻿--- a/PersonalTaskPlanner.csproj
++++ b/PersonalTaskPlanner.csproj
+@@ -1,6 +1,8 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+-    <TargetFramework>net472</TargetFramework>
++    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
++    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
++    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+     <OutputType>WinExe</OutputType>
+     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+     <UseWindowsForms>true</UseWindowsForms>
+@@ -4,7 +6,10 @@
+     <OutputType>WinExe</OutputType>
+     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+     <UseWindowsForms>true</UseWindowsForms>
+-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
++    <ImplicitUsings>enable</ImplicitUsings>
++    <Nullable>enable</Nullable>
++    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
++    <RootNamespace>PersonalTaskPlanner</RootNamespace>
+   </PropertyGroup>
+   <ItemGroup>
+     <Reference Include="System.Data.DataSetExtensions" />
+@@ -7,9 +12,10 @@
+     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="System.Data.DataSetExtensions" />
+-    <Reference Include="Microsoft.CSharp" />
+-    <Reference Include="System.Net.Http" />
++    <PackageReference Include="ClosedXML" Version="0.104.2" />
++    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
++    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
++    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
+   </ItemGroup>
+   <ItemGroup>
+     <None Include=".github\upgrades\scenarios\dotnet-version-upgrade\plan.md" />
+@@ -15,6 +21,8 @@
+     <None Include=".github\upgrades\scenarios\dotnet-version-upgrade\plan.md" />
+     <None Include=".github\upgrades\scenarios\dotnet-version-upgrade\scenario-instructions.md" />
+     <None Include=".github\upgrades\scenarios\dotnet-version-upgrade\tasks.md" />
++    <None Include=".github\upgrades\scenarios\dotnet-version-upgrade\tasks\01-foundation\progress-details.md" />
++    <None Include="tests\PersonalTaskPlanner.Tests\PersonalTaskPlanner.Tests.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+     <Folder Include="Documents\" />
+@@ -18,5 +26,9 @@
+   </ItemGroup>
+   <ItemGroup>
+     <Folder Include="Documents\" />
++  </ItemGroup>
++  <ItemGroup>
++    <Compile Remove="tests\**\*.cs" />
++    <None Remove="tests\**\*" />
+   </ItemGroup>
+ </Project>

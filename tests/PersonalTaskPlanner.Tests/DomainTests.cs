@@ -1,0 +1,27 @@
+using PersonalTaskPlanner.Application;
+using PersonalTaskPlanner.Domain;
+using Xunit;
+
+namespace PersonalTaskPlanner.Tests;
+
+public sealed class DomainTests
+{
+    [Fact]
+    public void NewTaskStartsOpenWithId() { var task = new TaskItem { Title = "Plan week" }; Assert.NotEqual(Guid.Empty, task.Id); Assert.Equal(PersonalTaskPlanner.Domain.TaskStatus.Open, task.Status); }
+
+    [Fact]
+    public async Task TaskServiceRejectsBlankTitle()
+    {
+        var store = new InMemoryStore(); var service = new TaskService(store, Microsoft.Extensions.Logging.Abstractions.NullLogger<TaskService>.Instance);
+        await Assert.ThrowsAsync<ArgumentException>(() => service.SaveAsync(new TaskItem { Title = " " }));
+    }
+
+    private sealed class InMemoryStore : IPlannerStore
+    {
+        private readonly PlannerData _data = new();
+        public Task<PlannerData> ReadAsync(CancellationToken cancellationToken = default) => Task.FromResult(_data);
+        public Task WriteAsync(PlannerData data, CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task BackupAsync(string destination, CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task RestoreAsync(string source, CancellationToken cancellationToken = default) => Task.CompletedTask;
+    }
+}

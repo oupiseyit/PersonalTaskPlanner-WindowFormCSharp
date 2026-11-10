@@ -1,0 +1,16 @@
+# Foundation task progress
+
+## Changes
+- Converted `PersonalTaskPlanner.csproj` to SDK-style .NET 8 Windows Forms with Windows platform metadata, nullable analysis, warning-as-error validation, ClosedXML, DI, and logging packages.
+- Added `tests/PersonalTaskPlanner.Tests` and registered it in the solution.
+- Added domain entities, application contracts/services, ClosedXML infrastructure, DI bootstrap, and WinForms shell/page controls.
+- Replaced the generic Dashboard page with `WinForms/DashboardControl.cs`, matching the supplied dashboard direction: navy sidebar, page header, KPI cards, task grid, quick-add panel, and calendar panel.
+- Preserved the existing task editor and other page hosts while making the dashboard the visual entry point.
+
+## Validation
+- `PersonalTaskPlanner.csproj`: build successful with no reported warnings.
+- `PersonalTaskPlanner.Tests.csproj`: build successful with no reported warnings.
+- Test Explorer: 2 tests passed, 0 failed.
+
+## Notes
+- The reference image dimensions were confirmed as 2048x1117. The dashboard implementation follows the documented visual system and the visible screenshot conventions, while keeping the UI responsive for smaller supported desktop sizes.

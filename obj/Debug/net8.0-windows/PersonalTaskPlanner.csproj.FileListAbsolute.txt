@@ -1,0 +1,7 @@
+\\Mac\Home\Documents\PersonalTaskPlanner\obj\Debug\net8.0-windows\PersonalTaskPlanner.csproj.AssemblyReference.cache
+\\Mac\Home\Documents\PersonalTaskPlanner\obj\Debug\net8.0-windows\PersonalTaskPlanner.Properties.Resources.resources
+\\Mac\Home\Documents\PersonalTaskPlanner\obj\Debug\net8.0-windows\PersonalTaskPlanner.csproj.GenerateResource.cache
+\\Mac\Home\Documents\PersonalTaskPlanner\obj\Debug\net8.0-windows\PersonalTaskPlanner.GeneratedMSBuildEditorConfig.editorconfig
+\\Mac\Home\Documents\PersonalTaskPlanner\obj\Debug\net8.0-windows\PersonalTaskPlanner.AssemblyInfoInputs.cache
+\\Mac\Home\Documents\PersonalTaskPlanner\obj\Debug\net8.0-windows\PersonalTaskPlanner.AssemblyInfo.cs
+\\Mac\Home\Documents\PersonalTaskPlanner\obj\Debug\net8.0-windows\PersonalTaskPlanner.csproj.CoreCompileInputs.cache

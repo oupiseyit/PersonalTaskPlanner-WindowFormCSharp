@@ -1,0 +1,5 @@
+﻿# 01-foundation: Convert project and establish architecture
+
+Replace the legacy project format with SDK-style .NET 8 Windows Forms, add required package references, create the documented project/folder boundaries, configure DI and logging, and add a test project with the initial domain/service test harness.
+
+**Done when**: The solution restores and builds on .NET 8 with zero warnings, the application entry point resolves its DI graph, and the test project is discoverable.

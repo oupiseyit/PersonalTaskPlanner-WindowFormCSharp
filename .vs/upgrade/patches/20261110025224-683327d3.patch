@@ -1,0 +1,673 @@
+﻿diff --git a/.github\upgrades\scenarios\dotnet-version-upgrade\assessment.json b/.github\upgrades\scenarios\dotnet-version-upgrade\assessment.json
+--- /dev/null
++++ b/.github\upgrades\scenarios\dotnet-version-upgrade\assessment.json
+@@ -0,0 +1,669 @@
++{
++  "settings": {
++    "components": {
++      "code": true,
++      "binaries": false
++    },
++    "targetId": "net8.0-windows",
++    "targetDisplayName": ".NETCoreApp,Version=v8.0"
++  },
++  "analysisStartTime": "2026-11-10T02:52:19.6861913Z",
++  "analysisEndTime": "2026-11-10T02:52:20.8630146Z",
++  "privacyModeHelpUrl": "https://go.microsoft.com/fwlink/?linkid=2270980",
++  "stats": {
++    "summary": {
++      "projects": 1,
++      "issues": 6,
++      "incidents": 21,
++      "effort": 21
++    },
++    "charts": {
++      "severity": {
++        "Mandatory": 19,
++        "Optional": 0,
++        "Potential": 2,
++        "Information": 0
++      },
++      "category": {
++        "Project": 2,
++        "Api": 19
++      }
++    }
++  },
++  "projects": [
++    {
++      "path": "PersonalTaskPlanner.csproj",
++      "startingProject": true,
++      "issues": 4,
++      "storyPoints": 21,
++      "properties": {
++        "appName": "PersonalTaskPlanner",
++        "projectKind": "ClassicWinForms",
++        "frameworks": [
++          "net472"
++        ],
++        "languages": [
++          "C#"
++        ],
++        "tools": [
++          "MSBuild"
++        ],
++        "isSdkStyle": false,
++        "isTestProject": false,
++        "numberOfFiles": 7,
++        "numberOfCodeFiles": 6,
++        "linesTotal": 333,
++        "linesOfCode": 216,
++        "totalApiScanned": 70,
++        "minLinesOfCodeToChange": 19,
++        "maxLinesOfCodeToChange": 19
++      },
++      "ruleInstances": [
++        {
++          "incidentId": "b0cde848-79f0-4ea9-8413-a56dac8c2d67",
++          "ruleId": "Project.0001",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "kind": "File",
++            "path": "PersonalTaskPlanner.csproj"
++          }
++        },
++        {
++          "incidentId": "d69c97e9-7a42-4359-a9ce-090a0f939137",
++          "ruleId": "Project.0002",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "Current target framework: .NETFramework,Version=v4.7.2\nRecommended target framework: net8.0-windows",
++              "protected": "Current target framework: .NETFramework,Version=v4.7.2\nRecommended target framework: net8.0-windows"
++            },
++            "kind": "File",
++            "path": "PersonalTaskPlanner.csproj",
++            "snippet": "Current target framework: .NETFramework,Version=v4.7.2\nRecommended target framework: net8.0-windows",
++            "protectedSnippet": "Current target framework: .NETFramework,Version=v4.7.2\nRecommended target framework: net8.0-windows",
++            "properties": {
++              "CurrentTargetFramework": ".NETFramework,Version=v4.7.2",
++              "RecommendedTargetFramework": "net8.0-windows"
++            }
++          }
++        },
++        {
++          "incidentId": "897f95f8-9a5c-4c1f-b4d8-aeedda2b9e08",
++          "ruleId": "Api.0002",
++          "description": "API is available in package System.Configuration.ConfigurationManager, 9.0.0-preview.6.24302.3. Add package reference to System.Configuration.ConfigurationManager, 9.0.0-preview.6.24302.3",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "ApplicationSettingsBase",
++              "protected": "M:System.Configuration.ApplicationSettingsBase.#ctor"
++            },
++            "kind": "File",
++            "path": "Properties\\Settings.Designer.cs",
++            "snippet": "ApplicationSettingsBase",
++            "protectedSnippet": "M:System.Configuration.ApplicationSettingsBase.#ctor",
++            "label": "M:System.Configuration.ApplicationSettingsBase.#ctor",
++            "properties": {
++              "PackageId": "System.Configuration.ConfigurationManager",
++              "PackageNewVersion": "9.0.0-preview.6.24302.3",
++              "CharCount": "1103"
++            },
++            "line": 16,
++            "column": 74
++          }
++        },
++        {
++          "incidentId": "45981ccd-6675-4d1f-b48d-eda07358e6bc",
++          "ruleId": "Api.0002",
++          "description": "API is available in package System.Configuration.ConfigurationManager, 9.0.0-preview.6.24302.3. Add package reference to System.Configuration.ConfigurationManager, 9.0.0-preview.6.24302.3",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "ApplicationSettingsBase",
++              "protected": "T:System.Configuration.ApplicationSettingsBase"
++            },
++            "kind": "File",
++            "path": "Properties\\Settings.Designer.cs",
++            "snippet": "ApplicationSettingsBase",
++            "protectedSnippet": "T:System.Configuration.ApplicationSettingsBase",
++            "label": "T:System.Configuration.ApplicationSettingsBase",
++            "properties": {
++              "PackageId": "System.Configuration.ConfigurationManager",
++              "PackageNewVersion": "9.0.0-preview.6.24302.3",
++              "CharCount": "1103"
++            },
++            "line": 16,
++            "column": 74
++          }
++        },
++        {
++          "incidentId": "b4d11edc-e9ca-4d9b-a79f-c9dd14035118",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "Application.Run(new Form1());",
++              "protected": "T:System.Windows.Forms.Application"
++            },
++            "kind": "File",
++            "path": "Program.cs",
++            "snippet": "Application.Run(new Form1());",
++            "protectedSnippet": "T:System.Windows.Forms.Application",
++            "label": "T:System.Windows.Forms.Application",
++            "properties": {
++              "CharCount": "548"
++            },
++            "line": 18,
++            "column": 12
++          }
++        },
++        {
++          "incidentId": "17543700-f086-4ecc-b8b2-5057fc37e282",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "Application.Run(new Form1());",
++              "protected": "M:System.Windows.Forms.Application.Run(System.Windows.Forms.Form)"
++            },
++            "kind": "File",
++            "path": "Program.cs",
++            "snippet": "Application.Run(new Form1());",
++            "protectedSnippet": "M:System.Windows.Forms.Application.Run(System.Windows.Forms.Form)",
++            "label": "M:System.Windows.Forms.Application.Run(System.Windows.Forms.Form)",
++            "properties": {
++              "CharCount": "548"
++            },
++            "line": 18,
++            "column": 12
++          }
++        },
++        {
++          "incidentId": "94eefe2c-10f7-414e-b0cb-d65be445b98d",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "Application.SetCompatibleTextRenderingDefault(false);",
++              "protected": "T:System.Windows.Forms.Application"
++            },
++            "kind": "File",
++            "path": "Program.cs",
++            "snippet": "Application.SetCompatibleTextRenderingDefault(false);",
++            "protectedSnippet": "T:System.Windows.Forms.Application",
++            "label": "T:System.Windows.Forms.Application",
++            "properties": {
++              "CharCount": "548"
++            },
++            "line": 17,
++            "column": 12
++          }
++        },
++        {
++          "incidentId": "bbf8b033-aa06-40e9-9175-6a34a2b97fe5",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "Application.SetCompatibleTextRenderingDefault(false);",
++              "protected": "M:System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(System.Boolean)"
++            },
++            "kind": "File",
++            "path": "Program.cs",
++            "snippet": "Application.SetCompatibleTextRenderingDefault(false);",
++            "protectedSnippet": "M:System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(System.Boolean)",
++            "label": "M:System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(System.Boolean)",
++            "properties": {
++              "CharCount": "548"
++            },
++            "line": 17,
++            "column": 12
++          }
++        },
++        {
++          "incidentId": "77a43b93-dbd5-4e57-8635-263ac036e47d",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "Application.EnableVisualStyles();",
++              "protected": "T:System.Windows.Forms.Application"
++            },
++            "kind": "File",
++            "path": "Program.cs",
++            "snippet": "Application.EnableVisualStyles();",
++            "protectedSnippet": "T:System.Windows.Forms.Application",
++            "label": "T:System.Windows.Forms.Application",
++            "properties": {
++              "CharCount": "548"
++            },
++            "line": 16,
++            "column": 12
++          }
++        },
++        {
++          "incidentId": "65dabf54-ff49-43c4-a6f3-0b68f8611ca4",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "Application.EnableVisualStyles();",
++              "protected": "M:System.Windows.Forms.Application.EnableVisualStyles"
++            },
++            "kind": "File",
++            "path": "Program.cs",
++            "snippet": "Application.EnableVisualStyles();",
++            "protectedSnippet": "M:System.Windows.Forms.Application.EnableVisualStyles",
++            "label": "M:System.Windows.Forms.Application.EnableVisualStyles",
++            "properties": {
++              "CharCount": "548"
++            },
++            "line": 16,
++            "column": 12
++          }
++        },
++        {
++          "incidentId": "01984c28-bb0c-4890-a40a-5aa53a6b25da",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "public Form1()\r\n        {\r\n            InitializeComponent();\r\n        }",
++              "protected": "M:System.Windows.Forms.Form.#ctor"
++            },
++            "kind": "File",
++            "path": "Form1.cs",
++            "snippet": "public Form1()\r\n        {\r\n            InitializeComponent();\r\n        }",
++            "protectedSnippet": "M:System.Windows.Forms.Form.#ctor",
++            "label": "M:System.Windows.Forms.Form.#ctor",
++            "properties": {
++              "CharCount": "397"
++            },
++            "line": 14,
++            "column": 8
++          }
++        },
++        {
++          "incidentId": "7fc6960d-54ca-4bdd-bc4d-664f46487f2c",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "this.Text = \u0022Form1\u0022;",
++              "protected": "P:System.Windows.Forms.Form.Text"
++            },
++            "kind": "File",
++            "path": "Form1.Designer.cs",
++            "snippet": "this.Text = \u0022Form1\u0022;",
++            "protectedSnippet": "P:System.Windows.Forms.Form.Text",
++            "label": "P:System.Windows.Forms.Form.Text",
++            "properties": {
++              "CharCount": "1246"
++            },
++            "line": 33,
++            "column": 12
++          }
++        },
++        {
++          "incidentId": "01e2b4d6-297a-4bbe-b215-9d9db949b4ae",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "this.ClientSize = new System.Drawing.Size(800, 450);",
++              "protected": "P:System.Windows.Forms.Form.ClientSize"
++            },
++            "kind": "File",
++            "path": "Form1.Designer.cs",
++            "snippet": "this.ClientSize = new System.Drawing.Size(800, 450);",
++            "protectedSnippet": "P:System.Windows.Forms.Form.ClientSize",
++            "label": "P:System.Windows.Forms.Form.ClientSize",
++            "properties": {
++              "CharCount": "1246"
++            },
++            "line": 32,
++            "column": 12
++          }
++        },
++        {
++          "incidentId": "de35ece0-3088-46e6-ae2f-b93f6360ef42",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;",
++              "protected": "T:System.Windows.Forms.AutoScaleMode"
++            },
++            "kind": "File",
++            "path": "Form1.Designer.cs",
++            "snippet": "this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;",
++            "protectedSnippet": "T:System.Windows.Forms.AutoScaleMode",
++            "label": "T:System.Windows.Forms.AutoScaleMode",
++            "properties": {
++              "CharCount": "1246"
++            },
++            "line": 31,
++            "column": 12
++          }
++        },
++        {
++          "incidentId": "00740938-f671-4846-aca5-0ef6fdb871bc",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;",
++              "protected": "T:System.Windows.Forms.AutoScaleMode"
++            },
++            "kind": "File",
++            "path": "Form1.Designer.cs",
++            "snippet": "this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;",
++            "protectedSnippet": "T:System.Windows.Forms.AutoScaleMode",
++            "label": "T:System.Windows.Forms.AutoScaleMode",
++            "properties": {
++              "CharCount": "1246"
++            },
++            "line": 31,
++            "column": 12
++          }
++        },
++        {
++          "incidentId": "f251720e-f962-4ad5-be33-e5773def870b",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;",
++              "protected": "F:System.Windows.Forms.AutoScaleMode.Font"
++            },
++            "kind": "File",
++            "path": "Form1.Designer.cs",
++            "snippet": "this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;",
++            "protectedSnippet": "F:System.Windows.Forms.AutoScaleMode.Font",
++            "label": "F:System.Windows.Forms.AutoScaleMode.Font",
++            "properties": {
++              "CharCount": "1246"
++            },
++            "line": 31,
++            "column": 12
++          }
++        },
++        {
++          "incidentId": "44839465-8953-4707-ad9a-5d53e8553afb",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;",
++              "protected": "T:System.Windows.Forms.AutoScaleMode"
++            },
++            "kind": "File",
++            "path": "Form1.Designer.cs",
++            "snippet": "this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;",
++            "protectedSnippet": "T:System.Windows.Forms.AutoScaleMode",
++            "label": "T:System.Windows.Forms.AutoScaleMode",
++            "properties": {
++              "CharCount": "1246"
++            },
++            "line": 31,
++            "column": 12
++          }
++        },
++        {
++          "incidentId": "9f05567d-7605-4a6c-93b4-831344f23026",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;",
++              "protected": "P:System.Windows.Forms.ContainerControl.AutoScaleMode"
++            },
++            "kind": "File",
++            "path": "Form1.Designer.cs",
++            "snippet": "this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;",
++            "protectedSnippet": "P:System.Windows.Forms.ContainerControl.AutoScaleMode",
++            "label": "P:System.Windows.Forms.ContainerControl.AutoScaleMode",
++            "properties": {
++              "CharCount": "1246"
++            },
++            "line": 31,
++            "column": 12
++          }
++        },
++        {
++          "incidentId": "42c64605-e670-4144-900a-802772813be9",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "base.Dispose(disposing);",
++              "protected": "M:System.Windows.Forms.Form.Dispose(System.Boolean)"
++            },
++            "kind": "File",
++            "path": "Form1.Designer.cs",
++            "snippet": "base.Dispose(disposing);",
++            "protectedSnippet": "M:System.Windows.Forms.Form.Dispose(System.Boolean)",
++            "label": "M:System.Windows.Forms.Form.Dispose(System.Boolean)",
++            "properties": {
++              "CharCount": "1246"
++            },
++            "line": 19,
++            "column": 12
++          }
++        },
++        {
++          "incidentId": "9cf3a1fd-10ee-46aa-8546-51049d4ed412",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "public Form1()\r\n        {\r\n            InitializeComponent();\r\n        }",
++              "protected": "M:System.Windows.Forms.Form.#ctor"
++            },
++            "kind": "File",
++            "path": "Form1.cs",
++            "snippet": "public Form1()\r\n        {\r\n            InitializeComponent();\r\n        }",
++            "protectedSnippet": "M:System.Windows.Forms.Form.#ctor",
++            "label": "M:System.Windows.Forms.Form.#ctor",
++            "properties": {
++              "CharCount": "397"
++            },
++            "line": 14,
++            "column": 8
++          }
++        },
++        {
++          "incidentId": "c38c89da-18da-47cd-8b85-10e1a575eeaf",
++          "ruleId": "Api.0001",
++          "description": "API is unavailable in net8.0 ",
++          "projectPath": "PersonalTaskPlanner.csproj",
++          "state": "Active",
++          "location": {
++            "snippetModel": {
++              "unrestricted": "Form",
++              "protected": "T:System.Windows.Forms.Form"
++            },
++            "kind": "File",
++            "path": "Form1.cs",
++            "snippet": "Form",
++            "protectedSnippet": "T:System.Windows.Forms.Form",
++            "label": "T:System.Windows.Forms.Form",
++            "properties": {
++              "CharCount": "397"
++            },
++            "line": 12,
++            "column": 33
++          }
++        }
++      ],
++      "features": [
++        {
++          "featureId": "LegacyConfiguration",
++          "incidents": [
++            "45981ccd-6675-4d1f-b48d-eda07358e6bc",
++            "897f95f8-9a5c-4c1f-b4d8-aeedda2b9e08"
++          ]
++        },
++        {
++          "featureId": "WinForms",
++          "incidents": [
++            "c38c89da-18da-47cd-8b85-10e1a575eeaf",
++            "9cf3a1fd-10ee-46aa-8546-51049d4ed412",
++            "42c64605-e670-4144-900a-802772813be9",
++            "9f05567d-7605-4a6c-93b4-831344f23026",
++            "44839465-8953-4707-ad9a-5d53e8553afb",
++            "f251720e-f962-4ad5-be33-e5773def870b",
++            "00740938-f671-4846-aca5-0ef6fdb871bc",
++            "de35ece0-3088-46e6-ae2f-b93f6360ef42",
++            "01e2b4d6-297a-4bbe-b215-9d9db949b4ae",
++            "7fc6960d-54ca-4bdd-bc4d-664f46487f2c",
++            "01984c28-bb0c-4890-a40a-5aa53a6b25da",
++            "65dabf54-ff49-43c4-a6f3-0b68f8611ca4",
++            "77a43b93-dbd5-4e57-8635-263ac036e47d",
++            "bbf8b033-aa06-40e9-9175-6a34a2b97fe5",
++            "94eefe2c-10f7-414e-b0cb-d65be445b98d",
++            "17543700-f086-4ecc-b8b2-5057fc37e282",
++            "b4d11edc-e9ca-4d9b-a79f-c9dd14035118"
++          ]
++        }
++      ]
++    }
++  ],
++  "rules": {
++    "Project.0001": {
++      "id": "Project.0001",
++      "isFeature": false,
++      "description": "Project file needs to be converted to SDK-style. Modern .NET framework projects require a change in the project file format and use SDK corresponding to project flavor and functionality.",
++      "label": "Project file needs to be converted to SDK-style",
++      "severity": "Mandatory",
++      "effort": 1,
++      "links": [
++        {
++          "title": "Overview of porting from .NET Framework to .NET",
++          "url": "https://go.microsoft.com/fwlink/?linkid=2265227",
++          "isCustom": false
++        },
++        {
++          "title": ".NET project SDKs",
++          "url": "https://go.microsoft.com/fwlink/?linkid=2265226",
++          "isCustom": false
++        }
++      ]
++    },
++    "Project.0002": {
++      "id": "Project.0002",
++      "isFeature": false,
++      "description": "Project\u0027s target framework(s) needs to be changed to the new target framework that you selected for this upgrade.\n\nDuring upgrade target framework will be adjusted to corresponding platform when applicable. In some cases project would result in multiple target frameworks after the upgrade if it was using features that now have their own platforms in modern .NET frameworks (windows, iOS, Android etc).",
++      "label": "Project\u0027s target framework(s) needs to be changed",
++      "severity": "Mandatory",
++      "effort": 1,
++      "links": [
++        {
++          "title": "Overview of porting from .NET Framework to .NET",
++          "url": "https://go.microsoft.com/fwlink/?linkid=2265227",
++          "isCustom": false
++        },
++        {
++          "title": ".NET project SDKs",
++          "url": "https://go.microsoft.com/fwlink/?linkid=2265226",
++          "isCustom": false
++        }
++      ]
++    },
++    "Api.0002": {
++      "id": "Api.0002",
++      "isFeature": false,
++      "description": "API is source incompatible for selected .NET version: requires code changes to compile successfully when targeting a new version, such as removing obsolete APIs or changing method signatures.",
++      "label": "Source incompatible for selected .NET version",
++      "severity": "Potential",
++      "effort": 1,
++      "links": [
++        {
++          "title": "Breaking changes in .NET",
++          "url": "https://go.microsoft.com/fwlink/?linkid=2262679",
++          "isCustom": false
++        }
++      ]
++    },
++    "Api.0001": {
++      "id": "Api.0001",
++      "isFeature": false,
++      "description": "API is binary incompatible for selected .NET version: affects existing binaries, often requiring recompilation, because the API has changed in a way that prevents older binaries from loading or executing.",
++      "label": "Binary incompatible for selected .NET version",
++      "severity": "Mandatory",
++      "effort": 1,
++      "links": [
++        {
++          "title": "Breaking changes in .NET",
++          "url": "https://go.microsoft.com/fwlink/?linkid=2262679",
++          "isCustom": false
++        }
++      ]
++    },
++    "LegacyConfiguration": {
++      "id": "LegacyConfiguration",
++      "isFeature": false,
++      "description": "Legacy XML-based configuration system (app.config/web.config) that has been replaced by a more flexible configuration model in .NET Core. The old system was rigid and XML-based. Migrate to Microsoft.Extensions.Configuration with JSON/environment variables; use System.Configuration.ConfigurationManager NuGet package as interim bridge if needed.",
++      "label": "Legacy Configuration System",
++      "severity": "Mandatory",
++      "effort": 2,
++      "links": [
++        {
++          "title": "Configuration in .NET",
++          "url": "https://go.microsoft.com/fwlink/?linkid=2341702",
++          "isCustom": false
++        }
++      ]
++    },
++    "WinForms": {
++      "id": "WinForms",
++      "isFeature": false,
++      "description": "Windows Forms APIs for building Windows desktop applications with traditional Forms-based UI that are available in .NET on Windows. Enable Windows Desktop support: Option 1 (Recommended): Target net9.0-windows; Option 2: Add \u003CUseWindowsDesktop\u003Etrue\u003C/UseWindowsDesktop\u003E; Option 3 (Legacy): Use Microsoft.NET.Sdk.WindowsDesktop SDK.",
++      "label": "Windows Forms",
++      "severity": "Mandatory",
++      "effort": 1,
++      "links": [
++        {
++          "title": "Windows Forms on .NET",
++          "url": "https://go.microsoft.com/fwlink/?linkid=2341906",
++          "isCustom": false
++        }
++      ]
++    }
++  }
++}

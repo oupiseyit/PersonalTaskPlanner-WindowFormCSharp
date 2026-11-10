@@ -1,0 +1,14 @@
+﻿--- a/.github\upgrades\scenarios\dotnet-version-upgrade\scenario.json
++++ b/.github\upgrades\scenarios\dotnet-version-upgrade\scenario.json
+@@ -3,7 +3,9 @@
+   "operationId": "9dc1ebd4-bfb6-419c-85bc-6ca171bf6a2e",
+   "description": "Upgrade .NET projects to newer .NET versions, including guidance on current release status, support lifecycle (LTS/STS), and recommended upgrade targets.",
+   "startTime": "2026-11-10T02:52:09.1289538Z",
+-  "lastUpdateTime": "2026-11-10T02:52:09.1560322Z",
+-  "properties": {},
++  "lastUpdateTime": "2026-11-10T02:52:19.3273933Z",
++  "properties": {
++    "UpgradeTargetFramework": "net8.0-windows"
++  },
+   "folderPath": ""
+ }

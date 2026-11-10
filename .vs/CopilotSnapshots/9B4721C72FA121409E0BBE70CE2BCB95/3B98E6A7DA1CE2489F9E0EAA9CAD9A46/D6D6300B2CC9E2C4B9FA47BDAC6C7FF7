@@ -1,0 +1,126 @@
+﻿using PersonalTaskPlanner.Application;
+using PersonalTaskPlanner.Domain;
+
+namespace PersonalTaskPlanner.WinForms;
+
+internal sealed class DashboardControl : PlannerControl
+{
+    private readonly ITaskService _tasks;
+    private readonly ICategoryService _categories;
+    private readonly Action<TaskItem?, DateTimeOffset?> _edit;
+    private readonly DataGridView _grid = new()
+    {
+        Dock = DockStyle.Fill,
+        AutoGenerateColumns = false,
+        AllowUserToAddRows = false,
+        AllowUserToDeleteRows = false,
+        ReadOnly = true,
+        RowHeadersVisible = false,
+        SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+        MultiSelect = false,
+        BackgroundColor = Color.White,
+        BorderStyle = BorderStyle.None,
+        AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None
+    };
+    private readonly TextBox _quickTitle = new() { Dock = DockStyle.Top, Height = 34, PlaceholderText = "What needs to be done?" };
+    private readonly ComboBox _quickPriority = new() { Dock = DockStyle.Top, Height = 34, DropDownStyle = ComboBoxStyle.DropDownList, DataSource = Enum.GetNames<TaskPriority>() };
+    private readonly MonthCalendar _calendar = new() { Dock = DockStyle.Top, MaxSelectionCount = 1 };
+    private readonly Label _total = MetricValue();
+    private readonly Label _completed = MetricValue();
+    private readonly Label _today = MetricValue();
+    private readonly Label _overdue = MetricValue();
+    private List<TaskItem> _items = new();
+
+    public DashboardControl(ITaskService tasks, ICategoryService categories, Action<TaskItem?, DateTimeOffset?> edit)
+    {
+        _tasks = tasks; _categories = categories; _edit = edit;
+        BuildGrid();
+        var metrics = new TableLayoutPanel { Dock = DockStyle.Top, Height = 94, ColumnCount = 4, RowCount = 1, Padding = new Padding(0, 0, 0, 12) };
+        metrics.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25)); metrics.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25)); metrics.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25)); metrics.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
+        metrics.Controls.Add(MetricCard("TOTAL TASKS", _total, Color.FromArgb(48, 119, 232)), 0, 0);
+        metrics.Controls.Add(MetricCard("COMPLETED", _completed, Color.FromArgb(36, 166, 112)), 1, 0);
+        metrics.Controls.Add(MetricCard("DUE TODAY", _today, Color.FromArgb(238, 157, 44)), 2, 0);
+        metrics.Controls.Add(MetricCard("OVERDUE", _overdue, Color.FromArgb(220, 82, 82)), 3, 0);
+
+        var right = BuildQuickPanel();
+        var split = new SplitContainer { Dock = DockStyle.Fill, Orientation = Orientation.Vertical, FixedPanel = FixedPanel.Panel2, Panel2MinSize = 250 };
+        split.Panel1.Controls.Add(_grid);
+        split.Panel2.Controls.Add(right);
+        Controls.Add(split); Controls.Add(metrics);
+        Load += async (_, _) =>
+        {
+            if (split.Width >= split.Panel1MinSize + split.Panel2MinSize)
+            {
+                split.SplitterDistance = Math.Min(650, split.Width - split.Panel2MinSize);
+            }
+
+            await RefreshAsync();
+        };
+        split.Resize += (_, _) =>
+        {
+            if (split.Width >= split.Panel1MinSize + split.Panel2MinSize)
+            {
+                split.SplitterDistance = Math.Min(split.SplitterDistance, split.Width - split.Panel2MinSize);
+            }
+        };
+        _calendar.DateSelected += async (_, _) => await RefreshAsync();
+    }
+
+    private void BuildGrid()
+    {
+        _grid.Columns.Add(new DataGridViewCheckBoxColumn { HeaderText = "", DataPropertyName = "Done", Width = 42 });
+        _grid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "TASK NAME", DataPropertyName = "Title", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
+        _grid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "DUE DATE", DataPropertyName = "Due", Width = 125 });
+        _grid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "PRIORITY", DataPropertyName = "Priority", Width = 90 });
+        _grid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "STATUS", DataPropertyName = "Status", Width = 95 });
+        _grid.CellDoubleClick += (_, _) => { if (Selected() is { } task) _edit(task, null); };
+        _grid.CellContentClick += async (_, args) => { if (args.RowIndex >= 0 && args.ColumnIndex == 0 && Selected() is { } task) { await _tasks.ToggleCompletedAsync(task.Id); await RefreshAsync(); } };
+        _grid.EnableHeadersVisualStyles = false;
+        _grid.ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle { BackColor = Color.FromArgb(235, 239, 247), ForeColor = Color.FromArgb(76, 88, 108), Font = new Font("Segoe UI", 8, FontStyle.Bold), SelectionBackColor = Color.FromArgb(235, 239, 247), SelectionForeColor = Color.FromArgb(76, 88, 108) };
+        _grid.DefaultCellStyle = new DataGridViewCellStyle { BackColor = Color.White, ForeColor = Color.FromArgb(42, 52, 70), SelectionBackColor = Color.FromArgb(224, 235, 255), SelectionForeColor = Color.FromArgb(24, 53, 105), Padding = new Padding(4, 5, 4, 5) };
+    }
+
+    private Control BuildQuickPanel()
+    {
+        var panel = new Panel { Dock = DockStyle.Fill, BackColor = Color.White, Padding = new Padding(16) };
+        var heading = new Label { Text = "QUICK ADD", Dock = DockStyle.Top, Height = 30, ForeColor = Color.FromArgb(76, 88, 108), Font = new Font("Segoe UI", 10, FontStyle.Bold) };
+        var add = PlannerControl.ActionButton("Add task"); add.Dock = DockStyle.Top; add.Margin = new Padding(0, 8, 0, 16); add.Click += async (_, _) => await QuickAddAsync();
+        var priorityLabel = new Label { Text = "Priority", Dock = DockStyle.Top, Height = 22, ForeColor = Color.FromArgb(100, 110, 125) };
+        var calendarLabel = new Label { Text = "PLAN YOUR DAY", Dock = DockStyle.Top, Height = 34, Padding = new Padding(0, 16, 0, 0), ForeColor = Color.FromArgb(76, 88, 108), Font = new Font("Segoe UI", 10, FontStyle.Bold) };
+        panel.Controls.Add(_calendar); panel.Controls.Add(calendarLabel); panel.Controls.Add(add); panel.Controls.Add(_quickPriority); panel.Controls.Add(priorityLabel); panel.Controls.Add(_quickTitle); panel.Controls.Add(heading);
+        return panel;
+    }
+
+    private async Task QuickAddAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_quickTitle.Text)) { MessageBox.Show("Enter a task title.", "Quick Add", MessageBoxButtons.OK, MessageBoxIcon.Information); _quickTitle.Focus(); return; }
+        await _tasks.SaveAsync(new TaskItem { Title = _quickTitle.Text.Trim(), Priority = Enum.Parse<TaskPriority>(_quickPriority.Text), DueAt = new DateTimeOffset(_calendar.SelectionStart.Date) });
+        _quickTitle.Clear(); await RefreshAsync();
+    }
+
+    private async Task RefreshAsync()
+    {
+        _items = (await _tasks.GetTasksAsync()).OrderBy(x => x.Status).ThenBy(x => x.DueAt).ToList();
+        var today = DateTime.Today;
+        var dueToday = _items.Count(x => x.Status == PersonalTaskPlanner.Domain.TaskStatus.Open && x.DueAt?.LocalDateTime.Date == today);
+        var overdue = _items.Count(x => x.Status == PersonalTaskPlanner.Domain.TaskStatus.Open && x.DueAt is not null && x.DueAt.Value.LocalDateTime.Date < today);
+        _total.Text = _items.Count.ToString(); _completed.Text = _items.Count(x => x.Status == PersonalTaskPlanner.Domain.TaskStatus.Completed).ToString(); _today.Text = dueToday.ToString(); _overdue.Text = overdue.ToString();
+        var selectedDate = _calendar.SelectionStart.Date;
+        _grid.DataSource = _items.Where(x => x.DueAt is null || x.DueAt.Value.LocalDateTime.Date == selectedDate || selectedDate == today).Select(x => new { x.Id, Done = x.Status == PersonalTaskPlanner.Domain.TaskStatus.Completed, x.Title, Due = x.DueAt?.ToLocalTime().ToString("MMM d, h:mm tt") ?? "No date", x.Priority, Status = x.Status.ToString() }).ToList();
+    }
+
+    private TaskItem? Selected()
+    {
+        if (_grid.CurrentRow?.Cells[0].Value is not null && Guid.TryParse(_grid.CurrentRow.Cells[0].Value.ToString(), out var id)) return _items.FirstOrDefault(x => x.Id == id);
+        return _items.FirstOrDefault(x => x.Title == _grid.CurrentRow?.Cells[1].Value?.ToString());
+    }
+
+    private static Label MetricValue() => new() { Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft, Font = new Font("Segoe UI", 20, FontStyle.Bold), ForeColor = Color.FromArgb(27, 38, 59) };
+    private static Control MetricCard(string caption, Label value, Color accent)
+    {
+        var card = new Panel { Dock = DockStyle.Fill, BackColor = Color.White, Margin = new Padding(0, 0, 10, 0), Padding = new Padding(14, 8, 8, 4) };
+        card.Paint += (_, e) => { using var brush = new SolidBrush(accent); e.Graphics.FillRectangle(brush, 0, 0, 4, card.Height); };
+        card.Controls.Add(value); card.Controls.Add(new Label { Text = caption, Dock = DockStyle.Top, Height = 20, ForeColor = Color.FromArgb(105, 115, 130), Font = new Font("Segoe UI", 8, FontStyle.Bold) });
+        return card;
+    }
+}

@@ -1,0 +1,113 @@
+﻿using PersonalTaskPlanner.Application;
+using PersonalTaskPlanner.Domain;
+using System.ComponentModel;
+using System.Drawing.Drawing2D;
+
+namespace PersonalTaskPlanner.WinForms;
+
+public sealed class MainForm : Form
+{
+    private readonly ITaskService _tasks;
+    private readonly ICategoryService _categories;
+    private readonly ISettingsService _settings;
+    private readonly IReportService _reports;
+    private readonly Panel _content = new() { Dock = DockStyle.Fill, Padding = new Padding(18), BackColor = Color.FromArgb(245, 247, 251) };
+    private readonly Label _title = new() { Dock = DockStyle.Top, Height = 48, Font = new Font("Segoe UI", 20, FontStyle.Bold), ForeColor = Color.FromArgb(27, 38, 59), TextAlign = ContentAlignment.MiddleLeft };
+    private readonly Dictionary<string, Func<Control>> _pages = new();
+    private Control? _current;
+
+    public MainForm(ITaskService tasks, ICategoryService categories, ISettingsService settings, IReportService reports)
+    {
+        _tasks = tasks; _categories = categories; _settings = settings; _reports = reports;
+        Text = "Personal Task Planner"; MinimumSize = new Size(1050, 650); StartPosition = FormStartPosition.CenterScreen;
+        BuildPages(); BuildShell(); Navigate("Dashboard");
+    }
+
+    private void BuildShell()
+    {
+        var sidebar = new Panel { Dock = DockStyle.Left, Width = 220, BackColor = Color.FromArgb(22, 32, 54), Padding = new Padding(14) };
+        var brand = new Label { Text = "PERSONAL\nTASK PLANNER", ForeColor = Color.White, Font = new Font("Segoe UI", 15, FontStyle.Bold), Dock = DockStyle.Top, Height = 72, TextAlign = ContentAlignment.MiddleLeft };
+        sidebar.Controls.Add(brand);
+        var nav = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, WrapContents = false, Padding = new Padding(0, 18, 0, 0) };
+        foreach (var page in _pages.Keys) { var button = new Button { Text = page, Width = 188, Height = 42, FlatStyle = FlatStyle.Flat, ForeColor = Color.White, BackColor = Color.FromArgb(22, 32, 54), TextAlign = ContentAlignment.MiddleLeft, AccessibleName = $"Open {page}" }; button.FlatAppearance.BorderSize = 0; button.Click += (_, _) => Navigate(page); nav.Controls.Add(button); }
+        sidebar.Controls.Add(nav); Controls.Add(_content); Controls.Add(sidebar);
+    }
+
+    private void BuildPages()
+    {
+        _pages["Dashboard"] = () => new TaskListControl("Dashboard", _tasks, _categories, ShowEditor);
+        _pages["Calendar View"] = () => new CalendarControl(_tasks, ShowEditor);
+        _pages["Today's Plan"] = () => new TodayControl(_tasks, ShowEditor);
+        _pages["All Tasks"] = () => new TaskListControl("All Tasks", _tasks, _categories, ShowEditor);
+        _pages["Categories"] = () => new CategoriesControl(_categories, _tasks);
+        _pages["Reports"] = () => new ReportsControl(_reports);
+        _pages["Settings"] = () => new SettingsControl(_settings);
+    }
+
+    private void Navigate(string page)
+    {
+        _title.Text = page;
+        _current?.Dispose(); _current = _pages[page](); _current.Dock = DockStyle.Fill; _content.Controls.Clear(); _content.Controls.Add(_current);
+    }
+
+    private async void ShowEditor(TaskItem? task, DateTimeOffset? due = null)
+    {
+        using var dialog = new TaskEditorForm(task, _categories);
+        if (dialog.ShowDialog(this) == DialogResult.OK && dialog.Value is not null) { await _tasks.SaveAsync(dialog.Value); Navigate("Dashboard"); }
+    }
+}
+
+internal abstract class PlannerControl : UserControl
+{
+    protected PlannerControl() { Dock = DockStyle.Fill; BackColor = Color.FromArgb(245, 247, 251); Font = new Font("Segoe UI", 10); }
+    protected static Button ActionButton(string text) => new() { Text = text, AutoSize = true, Height = 34, BackColor = Color.FromArgb(48, 119, 232), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+}
+
+internal sealed class TaskListControl : PlannerControl
+{
+    private readonly ITaskService _tasks; private readonly ICategoryService _categories; private readonly Action<TaskItem?, DateTimeOffset?> _edit; private readonly DataGridView _grid = new() { Dock = DockStyle.Fill, AutoGenerateColumns = false, AllowUserToAddRows = false, SelectionMode = DataGridViewSelectionMode.FullRowSelect, MultiSelect = false, BackgroundColor = Color.White, BorderStyle = BorderStyle.None }; private readonly TextBox _search = new() { Width = 220, PlaceholderText = "Search tasks..." };
+    private List<TaskItem> _items = new();
+    public TaskListControl(string caption, ITaskService tasks, ICategoryService categories, Action<TaskItem?, DateTimeOffset?> edit) { _tasks = tasks; _categories = categories; _edit = edit; var toolbar = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 52, Padding = new Padding(0, 0, 0, 10) }; toolbar.Controls.Add(_search); var add = ActionButton("+ New Task"); add.Click += (_, _) => _edit(null, null); toolbar.Controls.Add(add); var complete = ActionButton("Complete/Reopen"); complete.Click += async (_, _) => await Toggle(); toolbar.Controls.Add(complete); var delete = ActionButton("Delete"); delete.Click += async (_, _) => await Delete(); toolbar.Controls.Add(delete); _search.TextChanged += (_, _) => Bind(); ConfigureGrid(); Controls.Add(_grid); Controls.Add(toolbar); Load += async (_, _) => await RefreshAsync(); }
+    private void ConfigureGrid() { _grid.Columns.Add(new DataGridViewCheckBoxColumn { HeaderText = "Done", DataPropertyName = nameof(TaskItem.Status), Width = 55 }); _grid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Task Name", DataPropertyName = nameof(TaskItem.Title), AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill }); _grid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Due Date", DataPropertyName = nameof(TaskItem.DueAt), Width = 150 }); _grid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Priority", DataPropertyName = nameof(TaskItem.Priority), Width = 100 }); _grid.DoubleClick += (_, _) => { if (Selected() is { } task) _edit(task, null); }; }
+    private async Task RefreshAsync() { _items = (await _tasks.GetTasksAsync()).ToList(); Bind(); }
+    private void Bind() { var query = _search.Text.Trim(); _grid.DataSource = _items.Where(x => query.Length == 0 || x.Title.Contains(query, StringComparison.OrdinalIgnoreCase) || x.Description.Contains(query, StringComparison.OrdinalIgnoreCase)).Select(x => new { x.Id, Done = x.Status == TaskStatus.Completed, x.Title, DueAt = x.DueAt?.ToLocalTime().ToString("g") ?? "", x.Priority }).ToList(); }
+    private TaskItem? Selected() { if (_grid.CurrentRow?.Cells[0].Value is Guid id) return _items.FirstOrDefault(x => x.Id == id); if (_grid.CurrentRow?.DataBoundItem is not null && Guid.TryParse(_grid.CurrentRow.Cells[0].Value?.ToString(), out var parsed)) return _items.FirstOrDefault(x => x.Id == parsed); return _items.FirstOrDefault(x => x.Title == _grid.CurrentRow?.Cells[1].Value?.ToString()); }
+    private async Task Toggle() { if (Selected() is { } t) { await _tasks.ToggleCompletedAsync(t.Id); await RefreshAsync(); } }
+    private async Task Delete() { if (Selected() is { } t && MessageBox.Show($"Delete '{t.Title}'?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes) { await _tasks.DeleteAsync(t.Id); await RefreshAsync(); } }
+}
+
+internal sealed class CalendarControl : PlannerControl
+{
+    private readonly ITaskService _tasks; private readonly Action<TaskItem?, DateTimeOffset?> _edit; private readonly MonthCalendar _calendar = new() { MaxSelectionCount = 1 }; private readonly ListView _list = new() { Dock = DockStyle.Fill, View = View.Details, FullRowSelect = true }; public CalendarControl(ITaskService tasks, Action<TaskItem?, DateTimeOffset?> edit) { _tasks = tasks; _edit = edit; _list.Columns.Add("Task", 300); _list.Columns.Add("Priority", 100); _list.DoubleClick += (_, _) => { if (_list.SelectedItems.Count > 0 && _list.SelectedItems[0].Tag is TaskItem task) _edit(task, null); }; var add = ActionButton("+ Add for selected date"); add.Click += (_, _) => _edit(null, _calendar.SelectionStart); _calendar.DateSelected += async (_, _) => await RefreshAsync(); Controls.Add(_list); Controls.Add(add); add.Dock = DockStyle.Bottom; Controls.Add(_calendar); _calendar.Dock = DockStyle.Top; Load += async (_, _) => await RefreshAsync(); }
+    private async Task RefreshAsync() { var date = _calendar.SelectionStart.Date; _list.Items.Clear(); foreach (var task in (await _tasks.GetTasksAsync()).Where(x => x.DueAt?.LocalDateTime.Date == date)) { var item = new ListViewItem(task.Title) { Tag = task }; item.SubItems.Add(task.Priority.ToString()); _list.Items.Add(item); } }
+}
+
+internal sealed class TodayControl : PlannerControl
+{
+    public TodayControl(ITaskService tasks, Action<TaskItem?, DateTimeOffset?> edit) { var list = new TaskListControl("Today's Plan", tasks, new EmptyCategoryService(), edit); Controls.Add(list); }
+    private sealed class EmptyCategoryService : ICategoryService { public Task<IReadOnlyList<Category>> GetCategoriesAsync(CancellationToken c = default) => Task.FromResult<IReadOnlyList<Category>>(Array.Empty<Category>()); public Task<Category> SaveAsync(Category c, CancellationToken t = default) => throw new NotSupportedException(); public Task DeleteAsync(Guid id, CancellationToken t = default) => throw new NotSupportedException(); }
+}
+
+internal sealed class CategoriesControl : PlannerControl
+{
+    private readonly ICategoryService _categories; private readonly ITaskService _tasks; private readonly DataGridView _grid = new() { Dock = DockStyle.Fill, AutoGenerateColumns = true, ReadOnly = true, SelectionMode = DataGridViewSelectionMode.FullRowSelect }; public CategoriesControl(ICategoryService categories, ITaskService tasks) { _categories = categories; _tasks = tasks; var bar = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 48 }; var name = new TextBox { Width = 180, PlaceholderText = "Category name" }; var add = ActionButton("Add category"); add.Click += async (_, _) => { try { await _categories.SaveAsync(new Category { Name = name.Text }); name.Clear(); await RefreshAsync(); } catch (Exception ex) { MessageBox.Show(ex.Message, "Category", MessageBoxButtons.OK, MessageBoxIcon.Information); } }; var del = ActionButton("Delete"); del.Click += async (_, _) => { if (_grid.CurrentRow?.DataBoundItem is Category c && MessageBox.Show("Delete category and uncategorize its tasks?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes) { await _categories.DeleteAsync(c.Id); await RefreshAsync(); } }; bar.Controls.Add(name); bar.Controls.Add(add); bar.Controls.Add(del); Controls.Add(_grid); Controls.Add(bar); Load += async (_, _) => await RefreshAsync(); }
+    private async Task RefreshAsync() { _grid.DataSource = (await _categories.GetCategoriesAsync()).ToList(); }
+}
+
+internal sealed class ReportsControl : PlannerControl
+{
+    public ReportsControl(IReportService reports) { var summary = new Label { Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Segoe UI", 14) }; var export = ActionButton("Export CSV"); export.Dock = DockStyle.Bottom; export.Click += async (_, _) => { using var save = new SaveFileDialog { Filter = "CSV files|*.csv" }; if (save.ShowDialog() == DialogResult.OK) { await reports.ExportCsvAsync(save.FileName, DateTime.Today.AddMonths(-1), DateTime.Today); MessageBox.Show("Report exported.", "Reports"); } }; Controls.Add(summary); Controls.Add(export); Load += async (_, _) => { var m = await reports.GetMetricsAsync(DateTime.Today.AddMonths(-1), DateTime.Today); summary.Text = $"Created: {m.Created}\nCompleted: {m.Completed}\nOpen: {m.Open}\nOverdue: {m.Overdue}\nCompletion rate: {m.CompletionRate:0.0}%"; }; }
+}
+
+internal sealed class SettingsControl : PlannerControl
+{
+    public SettingsControl(ISettingsService settings) { var startup = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, DataSource = new[] { "Dashboard", "Calendar View", "Today's Plan", "All Tasks" } }; var format = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, DataSource = new[] { "MM/dd/yyyy", "yyyy-MM-dd", "dd/MM/yyyy" } }; var reminders = new CheckBox { Text = "Enable optional reminders" }; var save = ActionButton("Save settings"); var backup = ActionButton("Backup workbook"); var restore = ActionButton("Restore workbook"); var panel = new FlowLayoutPanel { Dock = DockStyle.Top, AutoSize = true, FlowDirection = FlowDirection.TopDown }; panel.Controls.Add(new Label { Text = "Startup page" }); panel.Controls.Add(startup); panel.Controls.Add(new Label { Text = "Date format" }); panel.Controls.Add(format); panel.Controls.Add(reminders); panel.Controls.Add(save); panel.Controls.Add(backup); panel.Controls.Add(restore); Controls.Add(panel); Load += async (_, _) => { var s = await settings.GetAsync(); startup.SelectedItem = s.StartupPage; format.SelectedItem = s.DateFormat; reminders.Checked = s.RemindersEnabled; }; save.Click += async (_, _) => { await settings.SaveAsync(new PlannerSettings(startup.Text, format.Text, reminders.Checked)); MessageBox.Show("Settings saved."); }; backup.Click += async (_, _) => { using var d = new SaveFileDialog { Filter = "Excel workbook|*.xlsx" }; if (d.ShowDialog() == DialogResult.OK) await settings.BackupAsync(d.FileName); }; restore.Click += async (_, _) => { using var d = new OpenFileDialog { Filter = "Excel workbook|*.xlsx" }; if (d.ShowDialog() == DialogResult.OK && MessageBox.Show("Replace local data with this backup?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes) await settings.RestoreAsync(d.FileName); }; }
+}
+
+public sealed class TaskEditorForm : Form
+{
+    private readonly TextBox _title = new() { Width = 360 }; private readonly RichTextBox _description = new() { Width = 360, Height = 100 }; private readonly ComboBox _priority = new() { DataSource = Enum.GetNames<TaskPriority>(), DropDownStyle = ComboBoxStyle.DropDownList }; private readonly DateTimePicker _due = new() { Width = 180 }; private readonly CheckBox _hasDue = new() { Text = "Due date" }; private readonly ComboBox _category = new() { Width = 200, DropDownStyle = ComboBoxStyle.DropDownList }; private readonly CheckBox _completed = new() { Text = "Completed" }; private readonly ErrorProvider _errors = new(); private readonly TaskItem? _original; private readonly ICategoryService _categories; public TaskItem? Value { get; private set; }
+    public TaskEditorForm(TaskItem? original, ICategoryService categories) { _original = original; _categories = categories; Text = original is null ? "New Task" : "Edit Task"; FormBorderStyle = FormBorderStyle.FixedDialog; StartPosition = FormStartPosition.CenterParent; MinimizeBox = false; MaximizeBox = false; var form = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(14), ColumnCount = 2, RowCount = 8, AutoSize = true }; Add(form, "Title", _title); Add(form, "Description", _description); Add(form, "Priority", _priority); Add(form, "Due", _hasDue); form.Controls.Add(_due, 1, 4); Add(form, "Category", _category); Add(form, "Status", _completed); var save = new Button { Text = "Save", DialogResult = DialogResult.None }; save.Click += Save; var cancel = new Button { Text = "Cancel", DialogResult = DialogResult.Cancel }; form.Controls.Add(save, 0, 7); form.Controls.Add(cancel, 1, 7); Controls.Add(form); AcceptButton = save; CancelButton = cancel; Load += async (_, _) => { var cats = await _categories.GetCategoriesAsync(); _category.Items.Add("Uncategorized"); foreach (var c in cats) _category.Items.Add(c); if (original is not null) { _title.Text = original.Title; _description.Text = original.Description; _priority.SelectedItem = original.Priority.ToString(); _hasDue.Checked = original.DueAt is not null; if (original.DueAt is { } due) _due.Value = due.LocalDateTime; _completed.Checked = original.Status == TaskStatus.Completed; _category.SelectedIndex = original.CategoryId is null ? 0 : Math.Max(0, _category.Items.Cast<object>().ToList().FindIndex(x => x is Category c && c.Id == original.CategoryId)); } else _category.SelectedIndex = 0; }; }
+    private static void Add(TableLayoutPanel p, string label, Control control) { var row = p.RowCount - 1; p.RowStyles.Add(new RowStyle(SizeType.AutoSize)); p.Controls.Add(new Label { Text = label, AutoSize = true, Anchor = AnchorStyles.Left }, 0, row); p.Controls.Add(control, 1, row); p.RowCount++; }
+    private void Save(object? sender, EventArgs e) { if (string.IsNullOrWhiteSpace(_title.Text) || _title.Text.Length > 200) { _errors.SetError(_title, "Title must contain 1-200 characters."); return; } var category = _category.SelectedItem as Category; Value = new TaskItem { Id = _original?.Id ?? Guid.NewGuid(), Title = _title.Text.Trim(), Description = _description.Text, Priority = Enum.Parse<TaskPriority>(_priority.Text), Status = _completed.Checked ? TaskStatus.Completed : TaskStatus.Open, DueAt = _hasDue.Checked ? new DateTimeOffset(_due.Value) : null, CategoryId = category?.Id, CreatedAt = _original?.CreatedAt ?? DateTime.UtcNow }; DialogResult = DialogResult.OK; }
+}

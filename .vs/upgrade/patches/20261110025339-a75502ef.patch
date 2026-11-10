@@ -1,0 +1,23 @@
+﻿diff --git a/.github\upgrades\scenarios\dotnet-version-upgrade\tasks.md b/.github\upgrades\scenarios\dotnet-version-upgrade\tasks.md
+--- /dev/null
++++ b/.github\upgrades\scenarios\dotnet-version-upgrade\tasks.md
+@@ -0,0 +1,19 @@
++# Personal Task Planner .NET 8 Implementation Progress
++
++## Overview
++
++The legacy .NET Framework WinForms project is being converted into the documented .NET 8 Windows Forms planner with layered architecture, ClosedXML persistence, DI/logging, all pages, and automated validation.
++
++**Progress**: 0/8 tasks complete <progress value="0" max="100"></progress> 0%
++
++## Tasks
++
++- 🔲 01-foundation: Convert project and establish architecture
++- 🔲 02-workbook-storage: Implement validated ClosedXML persistence
++- 🔲 03-application-services: Implement task, category, settings, and reporting services
++- 🔲 04-ui-shell: Implement MainForm shell and visual system
++- 🔲 05-task-pages: Implement Dashboard, All Tasks, Categories, and Task Editor
++- 🔲 06-planning-pages: Implement Calendar View and Today’s Plan
++- 🔲 07-reports-settings: Implement Reports and Settings
++- 🔲 08-qa-release: Run full validation and release checks
++

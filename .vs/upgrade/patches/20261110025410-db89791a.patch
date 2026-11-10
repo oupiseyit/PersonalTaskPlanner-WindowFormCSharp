@@ -1,0 +1,10 @@
+﻿diff --git a/.github\upgrades\scenarios\dotnet-version-upgrade\tasks\07-reports-settings\task.md b/.github\upgrades\scenarios\dotnet-version-upgrade\tasks\07-reports-settings\task.md
+--- /dev/null
++++ b/.github\upgrades\scenarios\dotnet-version-upgrade\tasks\07-reports-settings\task.md
+@@ -0,0 +1,6 @@
++# 07-reports-settings: Implement Reports and Settings
++
++Implement report metrics and CSV export plus preferences, backup/restore UI, validation, and friendly workbook error recovery.
++
++**Done when**: Report totals reconcile with workbook data, empty periods show zero, CSV opens as valid tabular data, settings persist, and backup/restore round-trips safely.
++

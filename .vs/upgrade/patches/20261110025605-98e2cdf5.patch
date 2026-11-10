@@ -1,0 +1,26 @@
+﻿diff --git a/PersonalTaskPlanner.csproj b/PersonalTaskPlanner.csproj
+--- /dev/null
++++ b/PersonalTaskPlanner.csproj
+@@ -0,0 +1,22 @@
++<Project Sdk="Microsoft.NET.Sdk">
++  <PropertyGroup>
++    <TargetFramework>net472</TargetFramework>
++    <OutputType>WinExe</OutputType>
++    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
++    <UseWindowsForms>true</UseWindowsForms>
++    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
++  </PropertyGroup>
++  <ItemGroup>
++    <Reference Include="System.Data.DataSetExtensions" />
++    <Reference Include="Microsoft.CSharp" />
++    <Reference Include="System.Net.Http" />
++  </ItemGroup>
++  <ItemGroup>
++    <None Include=".github\upgrades\scenarios\dotnet-version-upgrade\plan.md" />
++    <None Include=".github\upgrades\scenarios\dotnet-version-upgrade\scenario-instructions.md" />
++    <None Include=".github\upgrades\scenarios\dotnet-version-upgrade\tasks.md" />
++  </ItemGroup>
++  <ItemGroup>
++    <Folder Include="Documents\" />
++  </ItemGroup>
++</Project>

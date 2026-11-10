@@ -1,0 +1,5 @@
+﻿diff --git a/Domain\Entities.cs b/Domain\Entities.cs
+--- /dev/null
++++ b/Domain\Entities.cs
+@@ -0,0 +1,1 @@
++
